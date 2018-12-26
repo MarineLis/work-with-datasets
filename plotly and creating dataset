@@ -1,0 +1,66 @@
+import re
+import plotly
+import plotly.graph_objs as go
+from plotly import tools
+import pprint
+#file = "master.csv"
+
+
+def getCountry(line):
+    result = re.split(r',', line, maxsplit=1)
+    return result[0], result[1]
+
+
+def getYear(line):
+    result = re.split(r',', line, maxsplit=1)
+    year = re.findall(r'\d{4}', result[0])
+    return year[0], result[1]
+
+
+def getSex(line):
+    result = re.split(r',', line, maxsplit=1)
+    sex = re.findall(r'male|female', result[0])
+    return sex[0], result[1]
+
+
+def getAge(line):
+    result = re.split(r',', line, maxsplit=1)
+    age = re.findall(r'\d{1,2}\-\d{1,2}|75\+', result[0])
+    return age[0], result[1]
+
+
+def getNumber(line):
+    result = re.split(r',', line, maxsplit=1)
+    number = re.findall(r'\d{1,3}', result[0])
+    return number[0], result[1]
+
+
+dataset = {}
+
+try:
+
+    current_line = 0
+    with open("master.csv") as f:
+        f.readline()
+        for line in f:
+            current_line += 1
+            if not line.rstrip():
+                continue
+            country, new_line = getCountry(line)
+            #print(country)
+            year, new_line = getYear(new_line)
+            #print(year)
+            sex, new_line = getSex(new_line)
+            #print(sex)
+            age, new_line = getAge(new_line)
+            #print(age)
+            number, new_line = getNumber(new_line)
+            #print(number)
+            if country not in dataset:
+                dataset[country] = {}
+            if year not in dataset[country]:
+                dataset[country][year] = {}
+            if sex not in dataset[country][year]:
+                dataset[country][year][sex] = {}
+            dataset[country][year][sex][age] = number
+            #pprint.pprint(dataset)
